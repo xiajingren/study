@@ -1,6 +1,6 @@
-# mysql
+# :star:mysql
 
-mysql学习笔记。。。
+mysql学习笔记。。。:book::book::book:
 
 ## 索引
 
@@ -82,7 +82,7 @@ tips:
   - 聚集索引的查询速度略优于非聚集索引
 - 表数据文件本身就是按照B+Tree组织的一个索引结构文件
 - 建议InnoDB表必须建立主键，并且推荐使用整形的自增主键
-  - 主键唯一，为了组织B+Tree，必须要有数据唯一列。如果没有主键列，mysql会从表中找一个数据唯一列来组织B+Tree，如果没找到，mysql会建立一个隐藏的数据唯一列（rowid）
+  - 主键唯一，为了组织唯一索引B+Tree，必须要有数据唯一列。如果没有主键列，mysql会从表中找一个数据唯一列来组织B+Tree，如果没找到，mysql会建立一个隐藏的数据唯一列（rowid）
   - 整形占用空间小，且利于比较大小
   - B+Tree元素本身是从左到右顺序排列，自增主键可以避免B+Tree重新排列，分裂
 - 非主键索引（二级索引，非聚集索引）结构的叶子节点存储的是主键值
@@ -110,6 +110,39 @@ tips:mysql查询器会优化sql语句的查询字段顺序，即使字段顺序�
 跳过前面字段的话，无法确定元素是顺序排列的，违背了索引基本要求
 
 ![image-20210707221722947](README.assets/image-20210707221722947.png)
+
+### Explain
+
+![image-20210708215659829](README.assets/image-20210708215659829.png)
+
+#### Explain中的列
+
+- id
+
+  - id列的编号是select的序列号，有几个select就有几个id，并且id的顺序是按照select出现的顺序增长的
+
+  - id列越大执行优先级越高
+
+- select_type
+
+  - simple:简单查询。不包含子查询和union
+  - primary:复杂查询中最外层的select
+  - subquery:包含在select中的子查询（不在from子句中）
+  - derived:包含在from子句中的子查询。mysql会将结果存放在一个临时表中，也成为衍生表（派生 derived）
+  - union:在union中的第二个和随后的select
+
+- table
+
+  表示explain的一行正在访问的表
+
+  - 当from子句有子查询时，table列是`<derivedN>`格式，表示当前查询依赖id=N的查询，于是先执行id=N的查询
+  - 当有union时，UNION RESULT的table列的值为`<union1,2>`，1和2表示参与union的select行id
+
+- type
+
+
+
+
 
 
 
