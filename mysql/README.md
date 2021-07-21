@@ -548,6 +548,29 @@ mysql在读已提交和可重复读隔离级别下都实现了MVCC机制
 
 串行化隔离级别为了保证较高的隔离性，是通过将所有操作都加互斥锁来实现
 
+MVCC 是依赖记录中的 2个隐式字段（DB_TRX_ID-最近修改这条数据的事务ID；DB_ROLL_PTR-回滚指针，指向这条记录的上一个版本），**undo日志**，**Read View** 来实现的
+
+![image-20210721214734886](README.assets/image-20210721214734886.png)
+
+**判断逻辑**：
+
+1. 如果 DB_TRX_ID 小于 up_limit_id 那肯定是已经 Commit 的【可见】
+2. 如果 DB_TRX_ID 大于等于 low_limit_id 则说明这个数据是出现在 Read View 生成之后的【不可见】
+3. 如果 DB_TRX_ID 在活跃的事务中，则代表 Read View 生成时，这个事务还在活跃，还没有Commit【不可见】
+4. 如果 DB_TRX_ID 不在活跃的事务中，则代表 Read View 生成时，这个事务已经 Commit【可见】
+
+不可见的话一直往 undo log 的上一个版本读
+
+Tips:
+
+​	事务ID严格按照顺序，从小到大生成
+
+​	事务ID并不是开启事务时立即生成，而是遇到第一个写操作时才生成
+
+​	RR级别（可重复读）只在第一次读时生成 Read View，后面都是使用同一个 Read View
+
+​	RC级别（读已提交）每次读都会生成 Read View，所以能读到其他事务已提交的数据
+
 
 
 
