@@ -1,6 +1,6 @@
 # :star:mysql
 
-mysql学习笔记。。。:book::book::book:
+mysql学习笔记。。。:book:
 
 ## 索引基础
 
