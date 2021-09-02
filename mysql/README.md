@@ -69,8 +69,8 @@ tips:
 #### MyISAM
 
 - 非聚集索引-叶子节点存放索引和完整数据行的磁盘地址
-
 - MyISAM索引文件和数据文件是分离的
+- **不支持事务！！！**
 
 ![image-20210707195247159](README.assets/image-20210707195247159.png)
 
@@ -88,6 +88,7 @@ tips:
 - 非主键索引（二级索引，非聚集索引）结构的叶子节点存储的是主键值
   - 节约空间，数据一致性
   - 查询时先定位到主键，再通过主键索引去拿到整行数据（回表）
+- **支持事务！！！**
 
 ![image-20210707200625588](README.assets/image-20210707200625588.png)
 
@@ -466,7 +467,7 @@ tips:
 
   事务开始和完成时，数据都必须保持一致状态
 
-- 隔离性 (Isolation0
+- 隔离性 (Isolation)
 
   事务不能被外部操作影响
 
@@ -494,9 +495,23 @@ tips:
 
 ### 事务隔离级别
 
-事务隔离级别是针对会话的，mysql默认隔离级别是：可重复读
+mysql默认隔离级别是：可重复读
 
 ![image-20210721115749041](README.assets/image-20210721115749041.png)
+
+```sql
+//设置read uncommitted级别：
+set session transaction isolation level read uncommitted;
+
+//设置read committed级别：
+set session transaction isolation level read committed;
+
+//设置repeatable read级别：
+set session transaction isolation level repeatable read;
+
+//设置serializable级别：
+set session transaction isolation level serializable;
+```
 
 ### 锁
 
